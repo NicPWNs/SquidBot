@@ -1,0 +1,4 @@
+python-dotenv
+requests
+pynacl
+boto3

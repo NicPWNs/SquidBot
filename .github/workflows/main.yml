@@ -1,0 +1,53 @@
+name: Deploy to Lambda
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@main
+      - name: Deploy handler code to Lambda
+        uses: NicPWNs/py-lambda-action@main
+        with:
+          lambda_layer_arn: "arn:aws:lambda:us-east-1:087441767329:layer:lambda_deps_unicord"
+          lambda_function_name: "squidbot-event-handler"
+          python_version: "3.11"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+      - name: Deploy processor code to Lambda
+        uses: NicPWNs/py-lambda-action@main
+        with:
+          lambda_layer_arn: "arn:aws:lambda:us-east-1:087441767329:layer:lambda_deps_unicord"
+          lambda_function_name: "squidbot-event-processor"
+          python_version: "3.11"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+  build:
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@main
+      - name: Install Python 3
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Register slash commands with Discord
+        id: register
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          APP_ID: ${{ secrets.DISCORD_APP_ID }}
+        run: |
+          python register_commands.py
