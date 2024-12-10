@@ -1,14 +1,7 @@
-import io
-import re
-import base64
-import traceback
 from os import getenv
 from json import loads
 from dotenv import load_dotenv
-from urllib.parse import urljoin
-from requests import patch, post, get, put, delete
-from g4f.client import Client
-from contextlib import redirect_stdout
+from requests import patch
 
 
 # Load secrets
