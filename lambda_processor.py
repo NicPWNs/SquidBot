@@ -27,7 +27,7 @@ def lambda_processor(event, context):
     token = event["token"]
 
     # Respond with link to GitHub repo
-    data = {"embeds": [{"title": "Pong!", "color": 0xBD2C00}]}
+    data = {"embeds": [{"title": "Pong!", "color": 0x65C4EA}]}
 
     patch(
         url=f"https://discord.com/api/webhooks/{application}/{token}/messages/@original",
