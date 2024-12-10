@@ -10,10 +10,10 @@ DISCORD_TOKEN = getenv("DISCORD_TOKEN")
 # Discord Auth
 headers = {"Authorization": f"Bot {DISCORD_TOKEN}"}
 
-# /github Command
+# /ping command
 json = {
-    "name": "test",
-    "description": "test",
+    "name": "ping",
+    "description": "Replies with Pong!",
 }
 
 # Register Commands
